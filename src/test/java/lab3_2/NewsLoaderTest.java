@@ -28,6 +28,7 @@ public class NewsLoaderTest
 {
 	private ConfigurationLoader configurationLoader;
 	private NewsReader newsReader;
+	private NewsLoader newsLoader;
 	
 	@Before
 	public void start() 
@@ -86,5 +87,13 @@ public class NewsLoaderTest
         
         PublishableNews publishableNews = newsLoader.loadNews();
         assertThat(publishableNews.getPublicContent().size(), is(1));
+	}
+	
+	@Test
+	public void dependencyBehaviorTest() 
+	{
+		newsLoader.loadNews();
+		Mockito.verify(configurationLoader, Mockito.times(1)).loadConfiguration();
+		Mockito.verify(newsReader, Mockito.times(1)).read();
 	}
 }
