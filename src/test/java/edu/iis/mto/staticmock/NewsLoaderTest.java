@@ -1,6 +1,5 @@
-package lab3_2;
+package edu.iis.mto.staticmock;
 
-import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.*;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -12,14 +11,6 @@ import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import edu.iis.mto.staticmock.Configuration;
-import edu.iis.mto.staticmock.ConfigurationLoader;
-import edu.iis.mto.staticmock.IncomingInfo;
-import edu.iis.mto.staticmock.IncomingNews;
-import edu.iis.mto.staticmock.NewsLoader;
-import edu.iis.mto.staticmock.NewsReaderFactory;
-import edu.iis.mto.staticmock.PublishableNews;
-import edu.iis.mto.staticmock.SubsciptionType;
 import edu.iis.mto.staticmock.reader.NewsReader;
 
 @RunWith(PowerMockRunner.class)
@@ -38,12 +29,14 @@ public class NewsLoaderTest
 		
 		mockStatic(ConfigurationLoader.class);
 		when(ConfigurationLoader.getInstance()).thenReturn(configurationLoader);
-		
-		NewsReader newsReader = mock(NewsReader.class);
+
+		newsReader = mock(NewsReader.class);
 		when(newsReader.read()).thenReturn(new IncomingNews());
-		
+
 		mockStatic(NewsReaderFactory.class);
 		when(NewsReaderFactory.getReader(Mockito.anyString())).thenReturn(newsReader);
+
+		newsLoader = new NewsLoader();
 	}
 	
 	@Test
@@ -55,14 +48,14 @@ public class NewsLoaderTest
         incomingInfo = new IncomingInfo("A type subscription", SubsciptionType.A);
         incomingNews.add(incomingInfo);
         
-        incomingInfo = new IncomingInfo("B type subscription", SubsciptionType.B);
+        incomingInfo = new IncomingInfo("B type subscription", SubsciptionType.C);
         incomingNews.add(incomingInfo);
         
         incomingInfo = new IncomingInfo("None type subscription", SubsciptionType.NONE);
         incomingNews.add(incomingInfo);
         
         when(newsReader.read()).thenReturn(incomingNews);
-        NewsLoader newsLoader = new NewsLoader();
+        
         PublishableNews publishableNews = newsLoader.loadNews();
         assertThat(publishableNews.getSubscribentContent().size(), is(2));
 	}
@@ -71,19 +64,18 @@ public class NewsLoaderTest
 	public void newsForPublicTest()
 	{
 		IncomingNews incomingNews = new IncomingNews();
-        IncomingInfo incomingInfo = null;
+		IncomingInfo incomingInfo = null;
         
         incomingInfo = new IncomingInfo("A type subscription", SubsciptionType.A);
         incomingNews.add(incomingInfo);
         
-        incomingInfo = new IncomingInfo("B type subscription", SubsciptionType.B);
+        incomingInfo = new IncomingInfo("B type subscription", SubsciptionType.C);
         incomingNews.add(incomingInfo);
         
         incomingInfo = new IncomingInfo("None type subscription", SubsciptionType.NONE);
         incomingNews.add(incomingInfo);
         
         when(newsReader.read()).thenReturn(incomingNews);
-        NewsLoader newsLoader = new NewsLoader();
         
         PublishableNews publishableNews = newsLoader.loadNews();
         assertThat(publishableNews.getPublicContent().size(), is(1));
