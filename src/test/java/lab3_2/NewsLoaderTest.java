@@ -65,4 +65,26 @@ public class NewsLoaderTest
         PublishableNews publishableNews = newsLoader.loadNews();
         assertThat(publishableNews.getSubscribentContent().size(), is(2));
 	}
+	
+	@Test
+	public void newsForPublicTest()
+	{
+		IncomingNews incomingNews = new IncomingNews();
+        IncomingInfo incomingInfo = null;
+        
+        incomingInfo = new IncomingInfo("A type subscription", SubsciptionType.A);
+        incomingNews.add(incomingInfo);
+        
+        incomingInfo = new IncomingInfo("B type subscription", SubsciptionType.B);
+        incomingNews.add(incomingInfo);
+        
+        incomingInfo = new IncomingInfo("None type subscription", SubsciptionType.NONE);
+        incomingNews.add(incomingInfo);
+        
+        when(newsReader.read()).thenReturn(incomingNews);
+        NewsLoader newsLoader = new NewsLoader();
+        
+        PublishableNews publishableNews = newsLoader.loadNews();
+        assertThat(publishableNews.getPublicContent().size(), is(1));
+	}
 }
